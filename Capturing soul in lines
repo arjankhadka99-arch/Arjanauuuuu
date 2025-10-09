@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angshuman Deka | Sketch Artist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+        }
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #f59e0b; /* amber-500 */
+            transition: width .3s;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 1;
+        }
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+        .gallery-item .overlay-content {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            z-index: 2;
+        }
+        .gallery-item:hover .overlay-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .lightbox {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+        }
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 900px;
+            max-height: 80vh;
+        }
+        .lightbox-content {
+            animation-name: zoom;
+            animation-duration: 0.4s;
+        }
+        @keyframes zoom {
+            from {transform: scale(0.8)}
+            to {transform: scale(1)}
+        }
+        .close-lightbox {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .close-lightbox:hover,
+        .close-lightbox:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .filter-btn.active {
+            background-color: #f59e0b; /* amber-500 */
+            color: #111827;
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+
+    <!-- Header & Navigation -->
+    <header id="home" class="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-80 backdrop-blur-md">
+        <div class="container mx-auto flex justify-between items-center p-4">
+            <h1 class="text-2xl md:text-3xl font-black text-white tracking-wider">ANGSHUMAN DEKA</h1>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="nav-link text-lg font-medium text-gray-300 hover:text-amber-400 transition-colors">Home</a>
+                <a href="#portfolio" class="nav-link text-lg font-medium text-gray-300 hover:text-amber-400 transition-colors">Portfolio</a>
+                <a href="#about" class="nav-link text-lg font-medium text-gray-300 hover:text-amber-400 transition-colors">About</a>
+                <a href="#contact" class="nav-link text-lg font-medium text-gray-300 hover:text-amber-400 transition-colors">Contact</a>
+            </nav>
+            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
+                <i class="fas fa-bars h-6 w-6"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#home" class="block py-2 px-4 text-sm hover:bg-gray-700">Home</a>
+            <a href="#portfolio" class="block py-2 px-4 text-sm hover:bg-gray-700">Portfolio</a>
+            <a href="#about" class="block py-2 px-4 text-sm hover:bg-gray-700">About</a>
+            <a href="#contact" class="block py-2 px-4 text-sm hover:bg-gray-700">Contact</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed" style="background-image: url('https://placehold.co/1920x1080/111827/9ca3af?text=Graphite+Sketch+Texture');">
+        <div class="text-center bg-black bg-opacity-60 p-8 rounded-lg">
+            <h2 class="text-5xl md:text-7xl font-bold text-white mb-4">Capturing Soul in Lines</h2>
+            <p class="text-xl md:text-2xl text-gray-300">Custom Portraits, Creative Sketches, and Divine Art Prints</p>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-white mb-2">My Portfolio</h2>
+                <p class="text-lg text-gray-400">Explore my work in portraits, creative sketches, and divine art.</p>
+                <div class="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded"></div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div id="filter-buttons" class="flex flex-wrap justify-center gap-2 md:gap-4 mb-12">
+                <button class="filter-btn active px-4 py-2 text-sm md:text-base font-semibold rounded-full bg-gray-800 hover:bg-amber-500 hover:text-gray-900 transition-all duration-300" data-filter="all">All</button>
+                <button class="filter-btn px-4 py-2 text-sm md:text-base font-semibold rounded-full bg-gray-800 hover:bg-amber-500 hover:text-gray-900 transition-all duration-300" data-filter="portraits">Portraits</button>
+                <button class="filter-btn px-4 py-2 text-sm md:text-base font-semibold rounded-full bg-gray-800 hover:bg-amber-500 hover:text-gray-900 transition-all duration-300" data-filter="creative">Creative Sketches</button>
+                <button class="filter-btn px-4 py-2 text-sm md:text-base font-semibold rounded-full bg-gray-800 hover:bg-amber-500 hover:text-gray-900 transition-all duration-300" data-filter="divine">Divine Art</button>
+            </div>
+
+            <!-- Image Gallery -->
+            <div id="gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Images will be injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="lightbox">
+        <span class="close-lightbox" id="close-btn">&times;</span>
+        <img class="lightbox-content" id="lightbox-image" src="" alt="Enlarged view">
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gray-800">
+        <div class="container mx-auto px-4">
+             <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-white mb-2">About The Artist</h2>
+                <div class="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded"></div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="w-full md:w-1/3">
+                    <img src="https://placehold.co/600x600/374151/e5e7eb?text=Angshuman+Deka" alt="Angshuman Deka Portrait" class="rounded-full shadow-2xl mx-auto w-64 h-64 md:w-full md:h-auto object-cover">
+                </div>
+                <div class="w-full md:w-2/3 text-center md:text-left">
+                    <h3 class="text-3xl font-bold text-white mb-4">Hello, I'm Angshuman Deka</h3>
+                    <p class="text-gray-300 leading-relaxed mb-4">
+                        As a dedicated sketch artist from Roha, Assam, my passion lies in the power of lines and shading. I specialize in creating lifelike <strong class="text-amber-400">portrait sketches</strong> that capture the essence and personality of the subject. My work also ventures into the realm of imagination with <strong class="text-amber-400">creative sketches</strong> that bring unique ideas to life.
+                    </p>
+                    <p class="text-gray-300 leading-relaxed mb-6">
+                        A special area of focus for me is drawing gods and goddesses, a subject I approach with deep reverence and detail. I am excited to offer high-quality prints of this <strong class="text-amber-400">divine art</strong> series for collectors and devotees. Whether you're looking for a personal commission or a beautiful print, I'm here to create something meaningful for you.
+                    </p>
+                    <a href="#contact" class="inline-block bg-amber-500 text-gray-900 font-bold py-3 px-6 rounded-full hover:bg-amber-400 transition-colors duration-300 shadow-lg">Get In Touch</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-white mb-2">Commission a Sketch or Order Prints</h2>
+                <p class="text-lg text-gray-400">Let's collaborate on your unique piece of art.</p>
+                <div class="w-20 h-1 bg-amber-500 mx-auto mt-4 rounded"></div>
+            </div>
+            <div class="max-w-2xl mx-auto">
+                <div class="text-center mb-8 p-4 bg-gray-800 rounded-lg border border-gray-700">
+                    <p class="text-gray-300">For a faster response, feel free to call or WhatsApp me:</p>
+                    <a href="tel:7099040900" class="text-2xl font-bold text-amber-400 hover:text-amber-300 transition-colors flex items-center justify-center gap-2 mt-2">
+                        <i class="fas fa-phone"></i>
+                        70990 40900
+                    </a>
+                </div>
+                <p class="text-center text-gray-400 mb-8">Or, send me the details using the form below:</p>
+                <form action="#" method="POST" class="space-y-6">
+                    <div>
+                        <input type="text" name="name" id="name" required class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all" placeholder="Your Name">
+                    </div>
+                    <div>
+                        <input type="email" name="email" id="email" required class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all" placeholder="Your Email">
+                    </div>
+                    <div>
+                        <textarea name="message" id="message" rows="5" required class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg p-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all" placeholder="Describe your commission idea or ask about prints..."></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="bg-amber-500 text-gray-900 font-bold py-3 px-8 rounded-full hover:bg-amber-400 transition-colors duration-300 shadow-lg">Send Inquiry</button>
+                    </div>
+                </form>
+                 <div id="form-success" class="hidden mt-6 text-center text-green-400 p-3 bg-green-900 bg-opacity-50 rounded-lg">
+                    Thank you! Your inquiry has been sent. I'll get back to you soon.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-6">
+        <div class="container mx-auto px-4 text-center text-gray-400">
+             <div class="mb-4">
+                <a href="tel:7099040900" class="hover:text-amber-400 transition-colors">
+                    <i class="fas fa-phone mr-2"></i>70990 40900
+                </a>
+            </div>
+            <p>&copy; 2025 Angshuman Deka | Sketch Artist. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Mobile Menu ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // --- Contact Form ---
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const successMessage = document.getElementById('form-success');
+                successMessage.classList.remove('hidden');
+                form.reset();
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 4000);
+            });
+
+            // --- Gallery & Lightbox ---
+            const images = [
+                { src: 'https://placehold.co/800x600/1e293b/f59e0b?text=Portrait+Sketch+1', category: 'portraits', title: 'Gentle Gaze' },
+                { src: 'https://placehold.co/800x600/4a044e/fbbf24?text=Creative+Sketch+1', category: 'creative', title: 'Surreal Landscape' },
+                { src: 'https://placehold.co/800x600/1f2937/fcd34d?text=Divine+Art+1', category: 'divine', title: 'Lord Shiva' },
+                { src: 'https://placehold.co/800x600/1e3a8a/facc15?text=Portrait+Sketch+2', category: 'portraits', title: 'Joyful Smile' },
+                { src: 'https://placehold.co/800x600/701a75/fde047?text=Creative+Sketch+2', category: 'creative', title: 'Mythical Creature' },
+                { src: 'https://placehold.co/800x600/0c0a09/fef08a?text=Divine+Art+2', category: 'divine', title: 'Goddess Lakshmi' },
+                { src: 'https://placehold.co/800x600/065f46/eab308?text=Portrait+Sketch+3', category: 'portraits', title: 'Thoughtful Expression' },
+                { src: 'https://placehold.co/800x600/86198f/ca8a04?text=Creative+Sketch+3', category: 'creative', title: 'Steampunk Contraption' },
+                { src: 'https://placehold.co/800x600/3f3f46/a16207?text=Divine+Art+3', category: 'divine', title: 'Ganesha' },
+                { src: 'https://placehold.co/800x600/083344/854d0e?text=Portrait+Sketch+4', category: 'portraits', title: 'Elder Wisdom' },
+                { src: 'https://placehold.co/800x600/831843/eab308?text=Creative+Sketch+4', category: 'creative', title: 'Floating Islands' },
+                { src: 'https://placehold.co/800x600/18181b/f59e0b?text=Divine+Art+4', category: 'divine', title: 'Saraswati' }
+            ];
+
+            const gallery = document.getElementById('gallery');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const lightboxModal = document.getElementById('lightbox-modal');
+            const lightboxImage = document.getElementById('lightbox-image');
+            const closeBtn = document.getElementById('close-btn');
+
+            function renderGallery(filter = 'all') {
+                gallery.innerHTML = '';
+                const filteredImages = (filter === 'all') ? images : images.filter(img => img.category === filter);
+
+                filteredImages.forEach(image => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item relative overflow-hidden rounded-lg shadow-lg cursor-pointer group';
+                    item.innerHTML = `
+                        <img src="${image.src}" alt="${image.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        <div class="overlay-content absolute inset-0 flex items-center justify-center p-4 z-10 text-center">
+                            <h3 class="text-white text-xl font-bold">${image.title}</h3>
+                        </div>
+                    `;
+                    item.addEventListener('click', () => openLightbox(image.src, image.title));
+                    gallery.appendChild(item);
+                });
+            }
+
+            function openLightbox(src, alt) {
+                lightboxModal.style.display = "block";
+                lightboxImage.src = src;
+                lightboxImage.alt = alt;
+            }
+
+            function closeLightbox() {
+                lightboxModal.style.display = "none";
+            }
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const filter = button.getAttribute('data-filter');
+                    renderGallery(filter);
+                });
+            });
+
+            closeBtn.addEventListener('click', closeLightbox);
+            lightboxModal.addEventListener('click', (e) => {
+                if (e.target === lightboxModal) {
+                    closeLightbox();
+                }
+            });
+
+            // Initial render
+            renderGallery();
+        });
+    </script>
+</body>
+</html>
+
+
